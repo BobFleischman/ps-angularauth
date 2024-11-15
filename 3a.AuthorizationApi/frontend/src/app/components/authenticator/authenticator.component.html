@@ -5,12 +5,12 @@
     Hi {{ authorizationService.nameClaim }} !
     <div>
       <a class="mt-3 btn btn-secondary btn-sm" href="/account/logout">
-        Log out
+        Log out -- {{authorizationService.logoutUrl}}
       </a>
     </div>
   </div>
 </ng-container>
 
 <ng-template #noAuth>
-  <a class="btn btn-primary" href="/account/Login">Log in</a>
+  <a class="btn btn-primary" href="/account/login">Log in</a>
 </ng-template>

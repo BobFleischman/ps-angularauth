@@ -4,7 +4,7 @@ public class UserRepository
 {
     private List<UserAuthZ> userAuthZs =
     [
-        new UserAuthZ { ApplicationId = 1, UserId = "1", Type = "applicationrole", 
+        new UserAuthZ { ApplicationId = 1, UserId = "bob.fleischman@outlook.com", Type = "applicationrole", 
             Value = "editor" },
         new UserAuthZ { ApplicationId = 1, UserId = "2", Type = "applicationrole", 
             Value = "contributor" }

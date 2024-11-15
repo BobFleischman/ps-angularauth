@@ -11,7 +11,8 @@ public class GloboUserService(IOptions<BffOptions> options, ILoggerFactory logge
 
   private async Task<ClaimRecord[]> GetAuthzData()
   {
-    var token = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+        Console.WriteLine("GetAuthzData");
+        var token = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
     var http = httpClientFactory.CreateClient();
     http.BaseAddress = new Uri("https://localhost:7280");
     http.DefaultRequestHeaders.Authorization = 
@@ -24,7 +25,8 @@ public class GloboUserService(IOptions<BffOptions> options, ILoggerFactory logge
   protected override IEnumerable<ClaimRecord> GetUserClaims(
     AuthenticateResult authenticateResult)
   {
-    var baseClaims = base.GetUserClaims(authenticateResult);
+        Console.WriteLine("GetUserClaims");
+        var baseClaims = base.GetUserClaims(authenticateResult);
     var extraClaims = GetAuthzData().GetAwaiter().GetResult();
 
     return baseClaims.Concat(extraClaims);

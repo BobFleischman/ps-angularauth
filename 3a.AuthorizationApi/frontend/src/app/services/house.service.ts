@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { House } from '../types/house';
 
 @Injectable({
@@ -16,7 +16,11 @@ export class HouseService {
   };
 
   getHouses(): Observable<House[]> {
-    return this.http.get<House[]>('/api/houses', this.httpOptions);
+    return this.http.get<House[]>('/api/houses', this.httpOptions).pipe(
+      tap((houses) => {
+        console.log(houses);
+      })
+    );
   }
 
   getHouse(id: number): Observable<House> {
