@@ -26,4 +26,14 @@ export class HouseService {
   getHouse(id: number): Observable<House> {
     return this.http.get<House>(`/api/houses/${id}`, this.httpOptions);
   }
+
+  sayHello() : Observable<string> {
+    console.log('Saying hello');
+    return this.http.get<string>(`/api/hello`, this.httpOptions).pipe(
+      tap((hello) => {
+        console.log(hello);
+      })  
+    );
+  }
+
 }

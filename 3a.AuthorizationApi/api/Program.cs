@@ -3,6 +3,11 @@ using Globomantics.Api.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.Resource;
+using Microsoft.VisualBasic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +23,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         //o.Authority = "https://globomanticsidp20241112163928new.azurewebsites.net";
         //o.Authority = "https://localhost:5001"; 
         //o.Audience = "globomantics"; 
-    });
+    })
+    //.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+    ;
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
@@ -26,6 +33,13 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
+var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"];
+
+app.MapGet("/hello", (HttpContext httpContext) => {
+    Console.WriteLine("In Hello");
+    Console.WriteLine(httpContext.User);
+    return Results.Ok("API Hello");
+    });
 app.MapGet("/houses", [Authorize](HouseRepository repo) => repo.GetAll());
 app.MapGet("/houses/{id:int}", [Authorize](int id, HouseRepository repo) => repo.GetHouse(id));
 app.MapPost("/houses", [Authorize](House house, HouseRepository repo) =>
