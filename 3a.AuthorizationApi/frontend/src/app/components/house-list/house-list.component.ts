@@ -4,6 +4,7 @@ import { HouseService } from '../../services/house.service';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthorizationService } from '../../services/authorization.service';
+import { WeatherService } from '../../services/weather.service';
 
 @Component({
   selector: 'app-house-list',
@@ -18,7 +19,8 @@ export class HouseListComponent {
   constructor(
     private houseService: HouseService,
     private router: Router,
-    public authorizationService: AuthorizationService
+    public authorizationService: AuthorizationService,
+    public weatherService: WeatherService
   ) {}
 
   ngOnInit(): void {

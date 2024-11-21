@@ -1,10 +1,12 @@
 using Duende.Bff;
 using Duende.Bff.Yarp;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-const string entraIdScheme = "EntraIdOpenIDConnect";
+using Microsoft.IdentityModel.Tokens;
+// const string entraIdScheme = "EntraIdOpenIDConnect";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,7 @@ builder.Services.AddBff(o => o.ManagementBasePath = "/account")
     .AddServerSideSessions()
     .AddRemoteApis();
 
-builder.Services.AddScoped<IUserService, GloboUserService>();
+// builder.Services.AddScoped<IUserService, GloboUserService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -25,26 +27,44 @@ builder.Services.AddAuthentication(options =>
 
 }).AddOpenIdConnect(options =>
 {
+    options.ClientId = "f73a7c30-4824-4baa-84a6-d4b5bcf27b59";
+    options.ClientSecret = "1Rb8Q~KkJ~bwXlJsyC0w3VDp9I0aGO95VwFlealE";
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = "https://login.microsoftonline.com/a02df413-10fe-4ec3-b64d-0b43d22fdb92/v2.0";
     options.ResponseType = OpenIdConnectResponseType.Code;
     options.UsePkce = true;
+
     options.Scope.Add(OpenIdConnectScope.OpenIdProfile);
     options.Scope.Add(OpenIdConnectScope.Email);
-    // options.Scope.Add("ctry");
-    //options.Scope.Add("api://f73a7c30-4824-4baa-84a6-d4b5bcf27b59/Editor.Admin");
-    //options.Scope.Add("api://f73a7c30-4824-4baa-84a6-d4b5bcf27b59/HouseAdd");
-    options.Scope.Add("api://0aa25e76-0106-411d-af37-512a1cda2527/Houses.Admin");
     
+    //options.Scope.Add("api://0aa25e76-0106-411d-af37-512a1cda2527"); // does NOT work    
+    // options.Scope.Add("api://53369cff-a1d2-4587-a07d-4d6e61a1a395/Weather.Read");
+    options.Scope.Add("api://0aa25e76-0106-411d-af37-512a1cda2527/Data.Review");
+
     options.CallbackPath = "/signin-oidc";
     options.SignedOutCallbackPath = "/signout-callback-oidc";
     
-    options.ClientId = "f73a7c30-4824-4baa-84a6-d4b5bcf27b59";
-    options.ClientSecret = "1Rb8Q~KkJ~bwXlJsyC0w3VDp9I0aGO95VwFlealE";
     options.MapInboundClaims = false;
-    //options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
-    //options.TokenValidationParameters.RoleClaimType = "role";
     options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+
+    options.Events = new OpenIdConnectEvents
+    {
+        OnAuthorizationCodeReceived = context =>
+        {
+            // You can log or manipulate the authorization code here if needed
+            Console.WriteLine("Authorization Code Received");
+            Console.WriteLine(context.TokenEndpointRequest.Code);
+            return Task.CompletedTask;
+        },
+        OnTokenResponseReceived = context =>
+        {
+            // Handle the token response if needed
+            Console.WriteLine("Token Response Received");
+            Console.WriteLine(context.TokenEndpointResponse.AccessToken);
+            return Task.CompletedTask;
+        }
+    };
 
 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -88,8 +108,21 @@ app.MapBffManagementEndpoints();
 app.MapRemoteBffApiEndpoint("/api", "https://globomanticsapi20241113172150new.azurewebsites.net")//;
     .RequireAccessToken();
 
-//app.MapRemoteBffApiEndpoint("/api", "https://localhost:7165")//;
-//    .RequireAccessToken();
+app.MapRemoteBffApiEndpoint("/api2", "https://dmdataservice2.azurewebsites.net")//;
+    .RequireAccessToken();
+
+app.MapGet("/hello", async (HttpContext httpContext) =>
+{
+    Console.WriteLine("In Backend Hello");
+    //var tkn = await httpContext.GetClientAccessTokenAsync();
+    //Console.WriteLine(tkn);
+    foreach (var claim in httpContext.User.Claims)
+    {
+        Console.WriteLine($"{claim.Type}: {claim.Value}");
+    }
+    return Results.Ok("Backend API Hello");
+});
+
 app.UseSpaYarp();
 
 app.Run();

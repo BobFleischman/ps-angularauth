@@ -38,7 +38,7 @@ export class AuthorizationService {
       let role = c.find((claim) => claim.type === 'applicationrole');
       this.roleClaim = role ? role.value : '';
 
-      // roles come from MY entra Id
+      // roles come from MY entra Id -- Only First one
       let roles = c.find((claim) => claim.type === 'roles');
       this.rolesClaim = roles ? roles.value : '';
 

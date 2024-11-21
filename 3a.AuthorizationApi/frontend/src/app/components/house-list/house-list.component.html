@@ -23,3 +23,16 @@
   </div>
 </div>
 {{authorizationService.rolesClaim}}
+<hr>
+<div *ngIf="authorizationService.userClaims$ | async as userClaims">
+  <div *ngFor="let claim of userClaims">
+    <div>{{claim.type}}: <strong>{{claim.value}}</strong></div>
+  </div>
+  </div>
+
+<div *ngIf="weatherService.claims">
+  <h3>// show weather service claims</h3>
+  <div *ngFor="let claim of weatherService.claims">
+    <div>{{claim.type}}: <strong>{{claim.value}}</strong></div>
+  </div>
+</div>

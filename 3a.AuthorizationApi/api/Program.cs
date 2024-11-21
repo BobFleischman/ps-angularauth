@@ -38,7 +38,13 @@ var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"];
 app.MapGet("/hello", (HttpContext httpContext) => {
     Console.WriteLine("In Hello");
     Console.WriteLine(httpContext.User);
-    return Results.Ok("API Hello");
+    String longout = "";
+    foreach (var claim in httpContext.User.Claims)
+    {
+        longout = longout + $"{claim.Type}: {claim.Value}, ";
+        Console.WriteLine($"{claim.Type}: {claim.Value}");
+    }
+    return Results.Ok("API Hello - " + longout);
     });
 app.MapGet("/houses", [Authorize](HouseRepository repo) => repo.GetAll());
 app.MapGet("/houses/{id:int}", [Authorize](int id, HouseRepository repo) => repo.GetHouse(id));
