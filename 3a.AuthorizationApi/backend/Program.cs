@@ -31,14 +31,16 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = "1Rb8Q~KkJ~bwXlJsyC0w3VDp9I0aGO95VwFlealE";
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = "https://login.microsoftonline.com/a02df413-10fe-4ec3-b64d-0b43d22fdb92/v2.0";
-    options.ResponseType = OpenIdConnectResponseType.Code;
+    //options.ResponseType = OpenIdConnectResponseType.Code;
+    options.ResponseType = OpenIdConnectResponseType.CodeIdTokenToken;
     options.UsePkce = true;
 
     options.Scope.Add(OpenIdConnectScope.OpenIdProfile);
     options.Scope.Add(OpenIdConnectScope.Email);
-    
+
     //options.Scope.Add("api://0aa25e76-0106-411d-af37-512a1cda2527"); // does NOT work    
-    // options.Scope.Add("api://53369cff-a1d2-4587-a07d-4d6e61a1a395/Weather.Read");
+    options.Scope.Add("api://53369cff-a1d2-4587-a07d-4d6e61a1a395/Weather.Read");
+    //options.Scope.Add("api://0aa25e76-0106-411d-af37-512a1cda2527/DataRole.Seeker");
     options.Scope.Add("api://0aa25e76-0106-411d-af37-512a1cda2527/Data.Review");
 
     options.CallbackPath = "/signin-oidc";
@@ -46,25 +48,25 @@ builder.Services.AddAuthentication(options =>
     
     options.MapInboundClaims = false;
     options.SaveTokens = true;
-    options.GetClaimsFromUserInfoEndpoint = true;
+    // options.GetClaimsFromUserInfoEndpoint = true;
 
-    options.Events = new OpenIdConnectEvents
-    {
-        OnAuthorizationCodeReceived = context =>
-        {
-            // You can log or manipulate the authorization code here if needed
-            Console.WriteLine("Authorization Code Received");
-            Console.WriteLine(context.TokenEndpointRequest.Code);
-            return Task.CompletedTask;
-        },
-        OnTokenResponseReceived = context =>
-        {
-            // Handle the token response if needed
-            Console.WriteLine("Token Response Received");
-            Console.WriteLine(context.TokenEndpointResponse.AccessToken);
-            return Task.CompletedTask;
-        }
-    };
+    //options.Events = new OpenIdConnectEvents
+    //{
+    //    OnAuthorizationCodeReceived = context =>
+    //    {
+    //        // You can log or manipulate the authorization code here if needed
+    //        Console.WriteLine("Authorization Code Received");
+    //        Console.WriteLine(context.TokenEndpointRequest.Code);
+    //        return Task.CompletedTask;
+    //    },
+    //    OnTokenResponseReceived = context =>
+    //    {
+    //        // Handle the token response if needed
+    //        Console.WriteLine("Token Response Received");
+    //        Console.WriteLine(context.TokenEndpointResponse.AccessToken);
+    //        return Task.CompletedTask;
+    //    }
+    //};
 
 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
